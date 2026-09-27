@@ -7,8 +7,13 @@ print('Witaj, jestem Turkuć Podjadek i lubię podjadać pakiety sieciowe...')
 print('Za chwilę otrzymasz dostęp do panelu webowego')
 
 #odczyt socketu - ip i hostname
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+
+ip = s.getsockname()[0]
+
+s.close()
+
 #speedtest
 st = speedtest.Speedtest()
 download = st.download() / 1000000
@@ -30,7 +35,7 @@ def home():
 @app.route("/api/network/status1")
 def status1():
     data = {
-        "hostname": hostname,
+        "hostname": "Huawei P8 Lite",
         "ip": ip,
         "ping": ping,
         "download": download,
@@ -39,7 +44,7 @@ def status1():
     return jsonify(data)
 
 
-app.run(host="127.0.0.1", port=80)
+app.run(host="127.0.0.1", port=5000)
 
 
 

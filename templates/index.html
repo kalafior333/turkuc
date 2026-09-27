@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Turkuć</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        padding: clamp(16px, 5vw, 48px);
+        font-family: "Courier New", Courier, monospace;
+        background-color: #000000;
+        color: #08810e;
+        font-size: clamp(16px, 2.2vw, 22px);
+    }
+
+    .section {
+        width: 100%;
+        padding: clamp(16px, 4vw, 28px);
+        border: 1px solid #08810e;
+        border-radius: 8px;
+        overflow-wrap: anywhere;
+    }
+
+    #flex-box {
+        width: min(100%, 760px);
+        margin: 0 auto;
+    }
+
+    h1 {
+        margin: 0 0 24px;
+        font-size: clamp(28px, 7vw, 48px);
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+    }
+
+    .section p {
+        margin: 0;
+        padding: 12px 0;
+        line-height: 1.45;
+        border-bottom: 1px solid #064d0a;
+    }
+
+    .section p:last-child {
+        border-bottom: 0;
+    }
+
+    .section span {
+        font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 20px 14px;
+        }
+
+        h1 {
+            margin-bottom: 18px;
+        }
+
+        .section p {
+            padding: 10px 0;
+        }
+    }
+
+</style>
+</head>
+<body>
+
+    <div id="flex-box">
+        <h1>Turkuć podjadek</h1>
+        <div class="section">
+            <p>Hostname: <span id="hostname">-</span></p>
+            <p>IP: <span id="ip">-</span></p>
+            <p>Ping: <span id="ping">-</span> ms</p>
+            <p>Download: <span id="download">-</span> MB/s</p>
+            <p>Upload: <span id="upload">-</span> MB/s</p>
+            <h5>Speedtest może pokazywać zaniżone wyniki</h5>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        async function getNetworkData() {
+
+            const response = await fetch("/api/network/status1");
+
+            const data = await response.json();
+
+            document.getElementById("ip").textContent = data.ip;
+            document.getElementById("ping").textContent = data.ping;
+            document.getElementById("hostname").textContent = data.hostname;
+            document.getElementById("download").textContent = data.download;
+            document.getElementById("upload").textContent = data.upload;
+
+        }
+
+        getNetworkData();
+
+    </script>
+
+</body>
+</html>

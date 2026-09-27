@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, render_template
 import socket
 import speedtest
+import time
 
 print('Witaj, jestem Turkuć Podjadek i lubię podjadać pakiety sieciowe...')
 print('Za chwilę otrzymasz dostęp do panelu webowego')
@@ -42,6 +43,20 @@ def status1():
         "upload": upload
     }
     return jsonify(data)
+
+@app.route("/api/network/ping")
+def network_ping():
+    target = ("8.8.8.8", 53)
+    start = time.perf_counter()
+
+    try:
+        with socket.create_connection(target, timeout=3):
+            elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
+
+        return jsonify({"ping": elapsed_ms})
+
+    except OSError:
+        return jsonify({"ping": None, "error": "Brak połączenia z 8.8.8.8:53"}), 503
 
 
 app.run(host="127.0.0.1", port=5000)

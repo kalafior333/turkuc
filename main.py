@@ -3,6 +3,8 @@ from flask import Flask, jsonify, render_template
 import socket
 import speedtest
 import time
+import subprocess
+import platform
 
 print('Witaj, jestem Turkuć Podjadek i lubię podjadać pakiety sieciowe...')
 print('Za chwilę otrzymasz dostęp do panelu webowego')
@@ -15,16 +17,54 @@ ip = s.getsockname()[0]
 
 s.close()
 
-#speedtest
-st = speedtest.Speedtest()
-download = st.download() / 1000000
-download = download / 8
-download = round(download, 2)
-upload = st.upload() / 1000000
-upload = upload / 8
-upload = round(upload, 2)
-ping = st.results.ping
+def systemCheck():
+    system = platform.system()
+    return system
 
+devices = []
+status = []
+
+def networkScan(ip):
+    dott_position = ip.rfind(".")
+    ip_end = ip[: dott_position + 1]
+    print(ip_end)
+    system = systemCheck()
+    for i in range (1,255):
+        ip = ip_end + str(i)
+        print(ip)
+        devices.append(ip)
+        if system == "Windows":
+            command = ["ping", "-n", "1", "-w", "1000", ip]
+        else:
+            command = ["ping", "-c", "1", "-W", "1", ip]
+        result = subprocess.run(
+            command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )  
+        if result.returncode == 0:
+            devices.append('up')
+            print("Urządzenie up")
+        else:
+            devices.append('down')
+        print("run run")
+        
+
+networkScan(ip)
+print(devices)
+print(status)
+#speedtest
+#st = speedtest.Speedtest()
+#download = st.download() / 1000000
+#download = download / 8
+#download = round(download, 2)
+#upload = st.upload() / 1000000
+#upload = upload / 8
+#upload = round(upload, 2)
+#ping = st.results.ping
+download = 1
+upload = 1
+ping = 1
 
 
 app = Flask(__name__)

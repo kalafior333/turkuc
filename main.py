@@ -21,10 +21,9 @@ def systemCheck():
     system = platform.system()
     return system
 
-devices = []
-status = []
-
+#funkcja poszukująca inne urządzenia w sieci wykorzystując ping i tablicę arp
 def networkScan(ip):
+    #szybkie liczenie sieci - 255 w ostatnim oktecie - do poprawy!!
     dott_position = ip.rfind(".")
     ip_end = ip[: dott_position + 1]
     print(ip_end)
@@ -32,27 +31,41 @@ def networkScan(ip):
     for i in range (1,255):
         ip = ip_end + str(i)
         print(ip)
-        devices.append(ip)
+        #najpierw pingujemy wszystkie devices żeby wykonał się wpis do
         if system == "Windows":
             command = ["ping", "-n", "1", "-w", "1000", ip]
         else:
             command = ["ping", "-c", "1", "-W", "1", ip]
-        result = subprocess.run(
+        subprocess.run(
             command,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
-        )  
-        if result.returncode == 0:
-            devices.append('up')
-            print("Urządzenie up")
-        else:
-            devices.append('down')
-        print("run run")
+        )
+    result = subprocess.run(
+        ["arp", "-a"],
+        capture_output=True,
+        text=True
+    )
+    lines = result.stdout.splitlines()
+    devices = []
+
+    for line in lines:
+        parts = line.split()
+
+        if len(parts) == 3 and parts[2] == "dynamic":
+            ip = parts[0]
+            mac = parts[1]
+
+            devices.append({
+                "ip": ip,
+                "mac": mac
+            })
+
+    print(devices)
+    return devices
         
 
-networkScan(ip)
-print(devices)
-print(status)
+net_scan_result = networkScan(ip)
 #speedtest
 #st = speedtest.Speedtest()
 #download = st.download() / 1000000
